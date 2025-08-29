@@ -1,0 +1,76 @@
+[package]
+name = "shc_tiles"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy      = {git = "https://github.com/bevyengine/bevy.git", rev = "cbf989c9dab5ce8152ab9407e0d4cb42b0138003" }
+bytemuck  = "1.23.2"
+thiserror = "2.0.16"
+bitcode   = "0.6.7"
+brotli    = "8.0.2"
+
+[dev-dependencies]
+image = "0.25.2" # Match bevy v,ersion
+rand = "0.9.2"
+rand_xoshiro = "0.7.0"
+
+[lints.clippy]
+all                            = { level = "warn", priority = -1 }
+pedantic                       = { level = "warn", priority = -1 }
+alloc_instead_of_core          = "warn"
+as_underscore                  = "warn"
+clone_on_ref_ptr               = "warn"
+create_dir                     = "warn"
+empty_structs_with_brackets    = "warn"
+error_impl_error               = "warn"
+exit                           = "warn"
+filetype_is_file               = "warn"
+fn_to_numeric_cast_any         = "warn"
+format_push_string             = "warn"
+if_then_some_else_none         = "warn"
+missing_const_for_fn           = "warn"
+mixed_read_write_in_expression = "warn"
+panic_in_result_fn             = "warn"
+partial_pub_fields             = "warn"
+std_instead_of_core            = "warn"
+str_to_string                  = "warn"
+string_to_string               = "warn"
+tests_outside_test_module      = "warn"
+undocumented_unsafe_blocks     = "warn"
+unnecessary_safety_comment     = "warn"
+unnecessary_safety_doc         = "warn"
+unseparated_literal_suffix     = "warn"
+
+cast_lossless                  = "allow"
+cast_possible_truncation       = "allow"
+cast_possible_wrap             = "allow"
+cast_precision_loss            = "allow"
+cast_sign_loss                 = "allow"
+missing_docs_in_private_items  = "allow"
+missing_errors_doc             = "allow"
+module_name_repetitions        = "allow"
+needless_pass_by_value         = "allow"
+shadow_unrelated               = "allow"     
+similar_names                  = "allow"  
+missing_panics_doc             = "allow" 
+unwrap_in_result               = "allow"
+many_single_char_names         = "allow"
+match_same_arms                = "allow"
+collapsible_else_if            = "allow"
+too_many_arguments             = "allow"
+too_many_lines                 = "allow"
+wildcard_imports               = "allow"
+type_complexity                = "allow"
+collapsible_if                 = "allow"
+
+[profile.release]
+opt-level = 3
+# lto = "fat"
+# codegen-units = 1
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
