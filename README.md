@@ -13,6 +13,31 @@ the Apache v2.0 license, please see the included (LICENSE.md)[LICENSE.md] file,
 or if it's missing, it can be found online here:
 https://www.apache.org/licenses/LICENSE-2.0
 
+## Examples
+
+### Atlas Builder
+
+Run: `cargo run --example atlas_builder`
+
+This will load the tile_wall asset and make various modifications to fill up
+a few pages of an atlas. The atlas file will be written to disk both compressed
+and uncompressed, 2 of the tiles will be written out at all of their mip levels
+and all of the pages and their mip levels will be written out.
+
+This example is used to examine the non-rendering bits of the pipeline and visually
+confirm their function.
+
+### Scene
+
+Run: `cargo run --example atlas_builder --release`
+
+This will create a simple scene containing a grid of dense tile renderers. Vsync will
+be disabled and performance information written to the terminal. Every frame every chunk
+will be updated tile edits, providing a stress test of the render implementation's
+throughput. 
+
+You can press the tab key to toggle the random tile updates.
+
 ## Tile Atlas
 
 This crate provides a custom texture solution. It creates an tile atlas

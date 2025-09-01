@@ -71,8 +71,13 @@ fn setup(
 fn random_chunks(
     mut q_chunks: Query<&mut TileGridDense>,
     r_atlases: Res<Assets<TileAtlas>>,
+    r_keys: Res<ButtonInput<KeyCode>>,
     mut l_rng: Local<Option<Xoshiro256Plus>>,
+    mut l_disabled: Local<bool>,
 ) {
+    if r_keys.just_pressed(KeyCode::Tab) { *l_disabled = !*l_disabled; }
+    if *l_disabled { return; }
+
     let Some((_, atlas)) = r_atlases.iter().next() else { return; };
     let Some(tile_wall) = atlas.get_entry("base", "tile_wall").and_then(|e| TileAtlasSlot::new(e.index)) else { return; };
     let tile_air  = TileAtlasSlot::EMPTY;
