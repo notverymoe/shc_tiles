@@ -37,7 +37,7 @@ fn tile_grid_vertex(
         tile_uv.uv_base,
         depth
     );
-    let depth_adj          = vec3<f32>(0, 0, -depth_y_scale * scale * (f32(tile_local.y) + tile_uv.uv_base.y));
+    let depth_adj          = vec3<f32>(0, 0, depth_y_scale * scale * (f32(tile_local.y) + tile_uv.uv_base.y));
     let position_world_adj = position_world + depth_adj;
     let position_clip      = view.clip_from_world * vec4<f32>(position_world_adj, 1.0);
 
@@ -115,8 +115,7 @@ fn tile_grid_world_vertex_position(
     tile_uv_base: vec2<f32>,
     tile_depth:   f32,
 ) -> vec3<f32> {
-    let tile_pos_local = tile_scale * (tile_uv_base + tile_pos);
-    let world_pos      = grid_origin + tile_pos_local;
+    let world_pos = tile_scale * (grid_origin + tile_uv_base + tile_pos);
     return vec3<f32>(world_pos, tile_depth);
 }
 

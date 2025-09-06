@@ -85,10 +85,12 @@ impl TileGridDenseBuilder {
 
     #[must_use]
     pub fn build_with_transform_xyz(self, x: f32, y: f32, z: f32) -> (Transform, TileGridDense) {
-        let x = self.scale*x;
-        let y = self.scale*y;
         (
-            Transform::from_xyz(x, y, z - self.y_depth_scale*(y + self.offset.y)),
+            Transform::from_xyz(
+                self.scale*x, 
+                self.scale*y, 
+                z + self.y_depth_scale*self.scale*y
+            ),
             self.build()
         )
     }

@@ -61,9 +61,10 @@ fn tile_grid_dense_calculate_aabbs(
     q_recalculate_aabb: Query<(Entity, &TileGridDense), FilterUpdateOrMissingBounds>,
 ) {
     q_recalculate_aabb.iter().for_each(|(entity, tile_grid_dense)| {
+        let bounds = tile_grid_dense.calculate_bounds();
         commands.entity(entity).insert(Aabb::from_min_max(
-            (tile_grid_dense.scale() *  tile_grid_dense.offset()                                    ).extend(0.0), 
-            (tile_grid_dense.scale() * (tile_grid_dense.offset() + tile_grid_dense.size().as_vec2())).extend(0.0),
+            bounds.min.into(),
+            bounds.max.into()
         ));
     });
 }

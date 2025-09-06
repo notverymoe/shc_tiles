@@ -57,9 +57,10 @@ fn tile_grid_sparse_calculate_aabbs(
     q_recalculate_aabb: Query<(Entity, &TileGridSparse), FilterUpdateOrMissingBounds>,
 ) {
     q_recalculate_aabb.iter().for_each(|(entity, tile_grid_sparse)| {
+        let bounds = tile_grid_sparse.calculate_bounds();
         commands.entity(entity).insert(Aabb::from_min_max(
-            (tile_grid_sparse.scale() *  tile_grid_sparse.offset()                                     ).extend(0.0), 
-            (tile_grid_sparse.scale() * (tile_grid_sparse.offset() + tile_grid_sparse.size().as_vec2())).extend(0.0),
+            bounds.min.into(),
+            bounds.max.into()
         ));
     });
 }
