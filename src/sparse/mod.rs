@@ -1,6 +1,6 @@
 // Copyright 2025 Natalie Baker // Apache License v2 //
 
-use bevy::{camera::visibility::VisibilityClass, math::bounding::Aabb3d, prelude::*, render::sync_world::SyncToRenderWorld};
+use bevy::{camera::visibility::VisibilityClass, prelude::*, render::sync_world::SyncToRenderWorld};
 
 use crate::{prelude::TileAtlasSlot, shared::RenderPass2d, atlas::TileAtlas};
 
@@ -50,17 +50,14 @@ impl TileGridSparse {
     }
 
     #[must_use]
-    pub fn calculate_bounds(&self) -> Aabb3d {
+    pub fn calculate_bounds(&self) -> [Vec3; 2] {
         let p0 = self.scale*self.offset;
         let p1 = p0 + self.scale*self.size.as_vec2();
 
         let p0 = p0.extend(0.0);
         let p1 = p1.extend(self.y_depth_scale*(self.size.y as f32));
 
-        Aabb3d{
-            min: p0.min(p1).into(),
-            max: p0.max(p1).into()
-        }
+        [p0.min(p1), p0.max(p1)]
     }
 
 }

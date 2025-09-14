@@ -1,10 +1,10 @@
 // Copyright 2025 Natalie Baker // Apache License v2 //
 
 use bevy::{
-    prelude::*,
-    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
-    window::PresentMode,
+    prelude::*, 
     camera::ScalingMode,
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
+    window::PresentMode
 };
 
 use rand::prelude::*;
@@ -36,6 +36,7 @@ fn main() {
         ))
         .add_systems(Startup, setup)
         .add_systems(Update,  random_chunks)
+        .add_systems(Update,  draw_origin)
         .add_systems(Startup, camera_setup)
         .add_systems(Update,  camera_controls)
         .run();
@@ -61,7 +62,45 @@ fn setup(
 
     for x in 0..CHUNK_LEN {
         for y in 0..CHUNK_LEN {
-            spawn_chunk(&mut commands, CHUNK_SIZE, 4.0, -1.0, atlas.clone(), x, y);
+            spawn_chunk(&mut commands, CHUNK_SIZE, 4.0, 0.0, atlas.clone(), x, y);
+        }
+    }
+
+}
+
+fn draw_origin(
+    mut gizmos: Gizmos
+) {
+    gizmos.line_2d(Vec2::new( 0.0, -0.2), Vec2::new( 0.0,  0.2), Srgba::RED);
+    gizmos.line_2d(Vec2::new(-0.2,  0.0), Vec2::new( 0.2,  0.0), Srgba::RED);
+    gizmos.circle_2d(Vec2::ZERO, 0.1, Srgba::RED);
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum UpdateMode {
+    None,
+    Some,
+    #[default]
+    All,
+}
+
+impl UpdateMode {
+
+    #[must_use]
+    pub const fn next(self) -> Self {
+        match self {
+            UpdateMode::None => UpdateMode::Some,
+            UpdateMode::Some => UpdateMode::All,
+            UpdateMode::All  => UpdateMode::None,
+        }
+    }
+
+    #[must_use]
+    pub const fn prev(self) -> Self {
+        match self {
+            UpdateMode::None => UpdateMode::All,
+            UpdateMode::Some => UpdateMode::None,
+            UpdateMode::All  => UpdateMode::Some,
         }
     }
 
@@ -73,35 +112,62 @@ fn random_chunks(
     r_atlases: Res<Assets<TileAtlas>>,
     r_keys: Res<ButtonInput<KeyCode>>,
     mut l_rng: Local<Option<Xoshiro256Plus>>,
-    mut l_disabled: Local<bool>,
+    mut l_update_mode: Local<UpdateMode>,
 ) {
-    if r_keys.just_pressed(KeyCode::Tab) { *l_disabled = !*l_disabled; }
-    if *l_disabled { return; }
 
     let Some((_, atlas)) = r_atlases.iter().next() else { return; };
     let Some(tile_wall) = atlas.get_entry("base", "tile_wall").and_then(|e| TileAtlasSlot::new(e.index)) else { return; };
     let tile_air  = TileAtlasSlot::EMPTY;
     
     let l_rng = l_rng.get_or_insert_with(Xoshiro256Plus::from_os_rng);
-    for mut chunk in &mut q_chunks {
-        for _ in 0..8 {
-            let position = UVec2::new(
-                l_rng.random_range(0..CHUNK_SIZE),
-                l_rng.random_range(0..CHUNK_SIZE),
-            );
 
-            let value = if l_rng.random_bool(0.5) { tile_air } else { tile_wall };
-            if value == chunk.get(position) { continue; }
-            chunk.set(position, value);
-        }
+    if r_keys.just_pressed(KeyCode::Tab) { 
+        *l_update_mode = if r_keys.pressed(KeyCode::ShiftLeft) { l_update_mode.prev() } else { l_update_mode.next() }; 
     }
+
+    match *l_update_mode {
+        UpdateMode::None => {},
+        UpdateMode::Some => {
+            let count_n = 64;
+            let skip_n  = l_rng.random_range(0..q_chunks.count().saturating_sub(count_n));
+            for mut chunk in q_chunks.iter_mut().skip(skip_n).take(count_n) {
+                for _ in 0..8 {
+                    let position = UVec2::new(
+                        l_rng.random_range(0..CHUNK_SIZE),
+                        l_rng.random_range(0..CHUNK_SIZE),
+                    );
+
+                    let value = if l_rng.random_bool(0.5) { tile_air } else { tile_wall };
+                    if value == chunk.get(position) { continue; }
+                    chunk.set(position, value);
+                }
+            }
+        },
+        UpdateMode::All => {
+            for mut chunk in &mut q_chunks {
+                for _ in 0..8 {
+                    let position = UVec2::new(
+                        l_rng.random_range(0..CHUNK_SIZE),
+                        l_rng.random_range(0..CHUNK_SIZE),
+                    );
+
+                    let value = if l_rng.random_bool(0.5) { tile_air } else { tile_wall };
+                    if value == chunk.get(position) { continue; }
+                    chunk.set(position, value);
+                }
+            }
+        },
+    }
+
+
+
 }
 
 fn spawn_chunk(commands: &mut Commands, size: u32, time_scale: f64, depth: f32, atlas: Handle<TileAtlas>, x: u32, y: u32) {
     commands.spawn((
         TileGridDenseBuilder::new(UVec2::splat(16), 1.0)
             .with_atlas(Some(atlas))
-            .with_y_depth_scale(1.0)
+            .with_y_depth_scale(-1.0)
             .build_with_transform_xyz((x*size) as f32, (y*size) as f32, depth),
         TileGridAnimator::new(0, 0.0, time_scale),
     ));

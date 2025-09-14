@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bevy      = {git = "https://github.com/bevyengine/bevy.git", rev = "cbf989c9dab5ce8152ab9407e0d4cb42b0138003" }
+bevy      = {git = "https://github.com/bevyengine/bevy.git", rev = "1434b7575ce889dc20df3a2c642b253fa1d806c9"}
 bytemuck  = "1.23.2"
 thiserror = "2.0.16"
 bitcode   = "0.6.7"
