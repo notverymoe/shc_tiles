@@ -521,7 +521,7 @@ impl TileAtlasBuilder {
 impl TileAtlasBuilder {
 
     /**
-     * Calculates the maximium number of mip levels including the base level
+     * Calculates the maximum number of mip levels including the base level
      */
     #[must_use]
     pub const fn mip_levels_max(&self) -> u32 {
@@ -607,7 +607,7 @@ impl TileAtlasBuilder {
 }
 
 /**
- * Calculates the maximium number of mip levels including the base level
+ * Calculates the maximum number of mip levels including the base level
  */
 #[must_use]
 const fn mip_levels_max(size: u32) -> u32 {

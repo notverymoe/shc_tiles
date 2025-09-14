@@ -108,7 +108,7 @@ impl UpdateMode {
 
 
 fn random_chunks(
-    mut q_chunks: Query<&mut TileGridDense>,
+    mut q_chunks: Query<&mut TileGridDenseData>,
     r_atlases: Res<Assets<TileAtlas>>,
     r_keys: Res<ButtonInput<KeyCode>>,
     mut l_rng: Local<Option<Xoshiro256Plus>>,
