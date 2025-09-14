@@ -11,8 +11,25 @@ use rand::prelude::*;
 use rand_xoshiro::Xoshiro256Plus;
 use shc_tiles::prelude::*;
 
+// Rendering Settings //
+
 pub const CHUNK_SIZE: u32 = 16;
 pub const CHUNK_LEN:  u32 = 1024_u32.div_ceil(CHUNK_SIZE);
+
+// Updating Settings //
+
+// We standardize on the number of update calls to allow
+// isolating CHUNK_SIZE as a performance var and to ensure
+// the same number of tile updates between all and some to
+// isolate CHUNK_UPDATES_SOME_CHUNKS as a performance var.
+pub const CHUNK_UPDATES: u32 = 16384_u32;
+
+pub const CHUNK_UPDATES_ALL_COUNT: u32 = CHUNK_UPDATES.div_ceil(CHUNK_LEN*CHUNK_LEN);
+
+pub const CHUNK_UPDATES_SOME_CHUNKS: u32 = (CHUNK_LEN*CHUNK_LEN).div_ceil(8);
+pub const CHUNK_UPDATES_SOME_COUNT:  u32 = CHUNK_UPDATES.div_ceil(CHUNK_UPDATES_SOME_CHUNKS);
+
+// Camera Settings //
 
 pub const CAMERA_SPEED_MOVE_SLOW: f32 =   64.0;
 pub const CAMERA_SPEED_MOVE_FAST: f32 = 1024.0;
@@ -128,24 +145,25 @@ fn random_chunks(
     match *l_update_mode {
         UpdateMode::None => {},
         UpdateMode::Some => {
-            let count_n = 64;
-            let skip_n  = l_rng.random_range(0..q_chunks.count().saturating_sub(count_n));
-            for mut chunk in q_chunks.iter_mut().skip(skip_n).take(count_n) {
-                for _ in 0..8 {
-                    let position = UVec2::new(
-                        l_rng.random_range(0..CHUNK_SIZE),
-                        l_rng.random_range(0..CHUNK_SIZE),
-                    );
+            for _ in 0..CHUNK_UPDATES_SOME_CHUNKS {
+                let skip_n  = l_rng.random_range(0..q_chunks.count().saturating_sub(1));
+                for mut chunk in q_chunks.iter_mut().skip(skip_n).take(1) {
+                    for _ in 0..CHUNK_UPDATES_SOME_COUNT {
+                        let position = UVec2::new(
+                            l_rng.random_range(0..CHUNK_SIZE),
+                            l_rng.random_range(0..CHUNK_SIZE),
+                        );
 
-                    let value = if l_rng.random_bool(0.5) { tile_air } else { tile_wall };
-                    if value == chunk.get(position) { continue; }
-                    chunk.set(position, value);
+                        let value = if l_rng.random_bool(0.5) { tile_air } else { tile_wall };
+                        if value == chunk.get(position) { continue; }
+                        chunk.set(position, value);
+                    }
                 }
             }
         },
         UpdateMode::All => {
             for mut chunk in &mut q_chunks {
-                for _ in 0..8 {
+                for _ in 0..CHUNK_UPDATES_ALL_COUNT {
                     let position = UVec2::new(
                         l_rng.random_range(0..CHUNK_SIZE),
                         l_rng.random_range(0..CHUNK_SIZE),
@@ -165,7 +183,7 @@ fn random_chunks(
 
 fn spawn_chunk(commands: &mut Commands, size: u32, time_scale: f64, depth: f32, atlas: Handle<TileAtlas>, x: u32, y: u32) {
     commands.spawn((
-        TileGridDenseBuilder::new(UVec2::splat(16), 1.0)
+        TileGridDenseBuilder::new(UVec2::splat(size), 1.0)
             .with_atlas(Some(atlas))
             .with_y_depth_scale(-1.0)
             .build_with_transform_xyz((x*size) as f32, (y*size) as f32, depth),
