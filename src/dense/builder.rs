@@ -2,7 +2,7 @@
 
 use bevy::prelude::*;
 
-use crate::{atlas::{TileAtlas, TileAtlasSlot}, dense::TileGridDense, shared::RenderPass2d};
+use crate::{atlas::{TileAtlas, TileAtlasSlot}, dense::{TileGridDenseData, TileGridDenseInfo}, shared::RenderPass2d};
 
 #[derive(Debug, Clone)]
 pub struct TileGridDenseBuilder {
@@ -66,25 +66,30 @@ impl TileGridDenseBuilder {
     }
 
     #[must_use]
-    pub fn build(self) -> TileGridDense {
-        TileGridDense::new(
-            self.offset,
-            self.size,
-            self.scale,
-            self.atlas,
-            self.filled,
-            self.render_pass,
-            self.y_depth_scale,
+    pub fn build(self) -> (TileGridDenseData, TileGridDenseInfo) {
+        (
+            TileGridDenseData::new(
+                self.size,
+                self.filled,
+            ),
+            TileGridDenseInfo::new(
+                self.size,
+                self.atlas,
+                self.offset,
+                self.scale,
+                self.y_depth_scale,
+                self.render_pass,
+            )
         )
     }
 
     #[must_use]
-    pub fn build_with_transform(self, origin: Vec3) -> (Transform, TileGridDense) {
+    pub fn build_with_transform(self, origin: Vec3) -> (Transform, (TileGridDenseData, TileGridDenseInfo)) {
         self.build_with_transform_xyz(origin.x, origin.y, origin.z)
     }
 
     #[must_use]
-    pub fn build_with_transform_xyz(self, x: f32, y: f32, z: f32) -> (Transform, TileGridDense) {
+    pub fn build_with_transform_xyz(self, x: f32, y: f32, z: f32) -> (Transform, (TileGridDenseData, TileGridDenseInfo)) {
         (
             Transform::from_xyz(
                 self.scale*x, 

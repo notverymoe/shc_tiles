@@ -20,7 +20,7 @@ pub use prepare_buffers::*;
 mod prepare_bind_group;
 pub use prepare_bind_group::*;
 
-use super::TileGridDense;
+use crate::dense::TileGridDenseInfo;
 
 pub const HANDLE_TILE_GRID_DENSE_SHADER: Handle<Shader> = uuid_handle!("7c3507b6-98f3-4d3a-9694-96c042ff9fde");
 
@@ -54,11 +54,11 @@ impl Plugin for PluginTileGridDenseRender {
 
 }
 
-type FilterUpdateOrMissingBounds = (Or<(Without<Aabb>, Changed<TileGridDense>)>, Without<NoFrustumCulling>);
+type FilterUpdateOrMissingBounds = (Or<(Without<Aabb>, Changed<TileGridDenseInfo>)>, Without<NoFrustumCulling>);
 
 fn tile_grid_dense_calculate_aabbs(
     mut commands: Commands,
-    q_recalculate_aabb: Query<(Entity, &TileGridDense), FilterUpdateOrMissingBounds>,
+    q_recalculate_aabb: Query<(Entity, &TileGridDenseInfo), FilterUpdateOrMissingBounds>,
 ) {
     q_recalculate_aabb.iter().for_each(|(entity, tile_grid_dense)| {
         let [min, max] = tile_grid_dense.calculate_bounds();

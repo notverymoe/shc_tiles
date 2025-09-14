@@ -6,7 +6,7 @@ use bevy::{prelude::*, render::{render_resource::{encase::private::BufferMut, Bu
 
 use crate::{shared::RenderPass2d, sparse::render::TileGridSparseExtracted};
 
-use super::{TileGridSparseExtactedUpdate, TileGridSparseUniforms};
+use super::{TileGridSparseExtractedUpdate, TileGridSparseUniforms};
 
 // TODO PERF render_pass and depth changes shouldnt cause bindgroup recreations, but do
 #[derive(Debug, Default, Component)]
@@ -19,8 +19,8 @@ pub struct PreparedTileGridSparse {
 
 pub fn tile_grid_sparse_prepare_buffers(
     mut q_tilemaps: Query<
-        (&TileGridSparseExtracted, &mut TileGridSparseExtactedUpdate, &mut PreparedTileGridSparse), 
-        Changed<TileGridSparseExtactedUpdate>
+        (&TileGridSparseExtracted, &mut TileGridSparseExtractedUpdate, &mut PreparedTileGridSparse), 
+        Changed<TileGridSparseExtractedUpdate>
     >,
     render_device: Res<RenderDevice>,
     render_queue:  Res<RenderQueue>,
@@ -89,7 +89,7 @@ fn should_buffer_resize(size: u64, buffer: Option<&Buffer>) -> bool {
 
 fn create_buffer_with_size(render_device: &RenderDevice, size: u64) -> Buffer {
     render_device.create_buffer(&BufferDescriptor { 
-        label: Some("TileGridSparse Buffer"), 
+        label: Some("tile_grid_sparse_data"), 
         size,  
         usage: BufferUsages::COPY_DST | BufferUsages::STORAGE, 
         mapped_at_creation: true 

@@ -8,7 +8,7 @@ pub mod plugin;
 
 pub mod prelude {
     pub use super::dense::TileGridDenseBuilder;
-    pub use super::dense::TileGridDense;
+    pub use super::dense::TileGridDenseData;
     
     pub use super::sparse::TileGridSparseBuilder;
     pub use super::sparse::TileGridSparse;

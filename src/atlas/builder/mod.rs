@@ -390,11 +390,11 @@ impl TileAtlasBuilder {
     #[must_use]
     pub fn build_image(&self) -> Image {
         self.build_image_with_settings(
-            Some("TileAtlasTexture"),
+            Some("tile_atlas_texture"),
             TextureUsages::TEXTURE_BINDING,
             RenderAssetUsages::RENDER_WORLD,
             ImageSampler::Descriptor(ImageSamplerDescriptor{
-                label: Some("TileAtlasTextureSampler".to_owned()),
+                label: Some("tile_atlas_texture_sampler".to_owned()),
                 address_mode_u: ImageAddressMode::ClampToEdge,
                 address_mode_v: ImageAddressMode::ClampToEdge,
                 address_mode_w: ImageAddressMode::ClampToEdge,

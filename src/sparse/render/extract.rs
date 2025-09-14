@@ -43,7 +43,7 @@ pub struct TileGridSparseExtracted {
 }
 
 #[derive(Debug, Component)]
-pub struct TileGridSparseExtactedUpdate {
+pub struct TileGridSparseExtractedUpdate {
     pub(super) data:     Option<Box<[u64]>>,
     pub(super) uniforms: Option<TileGridSparseUniforms>,
     pub(super) texture:  Option<Handle<Image>>,
@@ -91,7 +91,7 @@ pub fn tile_grid_sparse_extract_updates(
         commands
             .entity(entity.entity())
             .insert((
-                TileGridSparseExtactedUpdate{
+                TileGridSparseExtractedUpdate{
                     data:     update_data.then(|| bytemuck::cast_slice_box(tile_grid_sparse.data_clone())),
                     uniforms: update_uniforms.then_some(uniforms),
                     texture:  if update_texture { texture.clone() } else { None },

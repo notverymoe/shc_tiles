@@ -6,7 +6,7 @@ use bevy::{prelude::*, render::{render_resource::{encase::private::BufferMut, Bu
 
 use crate::shared::RenderPass2d;
 
-use super::{TileGridDenseExtactedUpdate, TileGridDenseUniforms, TileGridDenseExtracted};
+use super::{TileGridDenseExtractedUpdate, TileGridDenseUniforms, TileGridDenseExtracted};
 
 // TODO PERF render_pass and depth changes shouldnt cause bindgroup recreations, but do
 #[derive(Debug, Default, Component)]
@@ -19,8 +19,8 @@ pub struct PreparedTileGridDense {
 
 pub fn tile_grid_dense_prepare_buffers(
     mut q_tilemaps: Query<
-        (&TileGridDenseExtracted, &mut TileGridDenseExtactedUpdate, &mut PreparedTileGridDense),
-        Changed<TileGridDenseExtactedUpdate>
+        (&TileGridDenseExtracted, &mut TileGridDenseExtractedUpdate, &mut PreparedTileGridDense),
+        Changed<TileGridDenseExtractedUpdate>
     >,
     render_device: Res<RenderDevice>,
     render_queue:  Res<RenderQueue>,
@@ -82,7 +82,7 @@ fn should_buffer_resize(size: u64, buffer: Option<&Buffer>) -> bool {
 
 fn create_buffer_with_size(render_device: &RenderDevice, size: u64) -> Buffer {
     render_device.create_buffer(&BufferDescriptor { 
-        label: Some("TileGridDense Buffer"), 
+        label: Some("tile_grid_dense_data"), 
         size,  
         usage: BufferUsages::COPY_DST | BufferUsages::STORAGE, 
         mapped_at_creation: true 

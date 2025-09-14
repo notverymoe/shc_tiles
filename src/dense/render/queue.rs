@@ -2,7 +2,7 @@
 
 use bevy::{asset::AssetId, core_pipeline::core_2d::{AlphaMask2d, AlphaMask2dBinKey, BatchSetKey2d, Opaque2d, Opaque2dBinKey, Transparent2d}, ecs::{component::Tick, query::Without, system::{Local, Query, Res, ResMut}}, math::FloatOrd, mesh::Mesh, render::{render_phase::{BinnedRenderPhaseType, DrawFunctions, InputUniformIndex, PhaseItemExtraIndex, ViewBinnedRenderPhases, ViewSortedRenderPhases}, render_resource::{PipelineCache, SpecializedRenderPipelines}, view::{ExtractedView, Msaa, RenderVisibleEntities}}, sprite_render::Mesh2dPipelineKey};
 
-use crate::{dense::{render::{PreparedTileGridDense, TileGridDenseDrawCommands, TileGridDensePipeline, TileGridDensePipelineKey}, TileGridDense}, shared::RenderPass2d};
+use crate::{dense::{render::{PreparedTileGridDense, TileGridDenseDrawCommands, TileGridDensePipeline, TileGridDensePipelineKey}, TileGridDenseInfo}, shared::RenderPass2d};
 
 pub fn tile_grid_dense_queue_draw_commands(
     mut pipelines: ResMut<SpecializedRenderPipelines<TileGridDensePipeline>>,
@@ -42,7 +42,7 @@ pub fn tile_grid_dense_queue_draw_commands(
 
         let mesh_key = Mesh2dPipelineKey::from_hdr(view.hdr) | Mesh2dPipelineKey::from_msaa_samples(msaa.samples());
 
-        for &(render_entity, main_entity) in visible_entities.get::<TileGridDense>() {
+        for &(render_entity, main_entity) in visible_entities.get::<TileGridDenseInfo>() {
             let Ok(grid) = q_tile_grid.get(render_entity) else { continue; };
 
             let pipeline_id = pipelines.specialize(

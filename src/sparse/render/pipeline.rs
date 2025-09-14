@@ -89,7 +89,7 @@ impl SpecializedRenderPipeline for TileGridSparsePipeline {
         };
 
         RenderPipelineDescriptor {
-            label: Some("TileGridSparseRenderPipeline".into()),
+            label: Some("tile_grid_sparse_pipeline".into()),
             layout: vec![
                 self.layout_view.clone(),
                 self.layout_tilemap.clone()

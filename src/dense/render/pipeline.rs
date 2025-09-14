@@ -89,7 +89,7 @@ impl SpecializedRenderPipeline for TileGridDensePipeline {
         };
 
         RenderPipelineDescriptor {
-            label: Some("TileGridDenseRenderPipeline".into()),
+            label: Some("tile_grid_dense_pipeline".into()),
             layout: vec![
                 self.layout_view.clone(),
                 self.layout_tilemap.clone()
